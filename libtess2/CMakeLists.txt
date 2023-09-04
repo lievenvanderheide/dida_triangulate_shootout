@@ -1,0 +1,16 @@
+add_library(libtess2
+    bucketalloc.c
+    bucketalloc.h
+    dict.c
+    dict.h
+    geom.c
+    geom.h
+    mesh.c
+    mesh.h
+    priorityq.c
+    priorityq.h
+    sweep.c
+    sweep.h
+    tess.c
+    tess.h
+    tesselator.h)

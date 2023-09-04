@@ -1,0 +1,5 @@
+BreakBeforeBraces: Allman
+AlwaysBreakTemplateDeclarations: true
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: false
+PointerAlignment: Left
