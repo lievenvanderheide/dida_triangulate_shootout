@@ -10,17 +10,27 @@
 #include "libtess2/tesselator.h"
 #include "mapbox/earcut.hpp"
 
+extern "C"
+{
+
+  using SeidelPoint = double[2];
+  using SeidelTriangle = int[3];
+
+  // Seidel's triangulate function.
+  int triangulate_polygon(int ncontours, int cntr[], SeidelPoint* vertices, SeidelTriangle* triangles);
+}
+
 void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
 {
   using namespace dida::detail::vertical_decomposition;
 
-  {
+  /*{
     NodePool node_pool;
     Node* root_node = vertical_decomposition_with_divide_and_conquer_builder(
         polygon, node_pool, VerticalDecompositionType::interior_decomposition);
     std::vector<Triangle2> triangulation = triangulate(polygon, root_node);
     CHECK(validate_triangulation(polygon, triangulation));
-  }
+  }*/
 
   BENCHMARK(name + ", triangulate")
   {
@@ -99,7 +109,7 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
 
     std::vector<std::vector<MapboxPoint>> mapbox_polygon{mapbox_ring};
 
-    {
+    /*{
       std::vector<uint32_t> result = mapbox::earcut<uint32_t>(mapbox_polygon);
       DIDA_ASSERT(result.size() % 3 == 0);
 
@@ -116,11 +126,44 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
       }
 
       CHECK(validate_triangulation(polygon, triangulation));
-    }
+    }*/
 
     BENCHMARK(name + ", Mapbox earcut.hpp")
     {
       return mapbox::earcut<uint32_t>(mapbox_polygon);
+    };
+  }
+
+  {
+    std::vector<SeidelPoint> vertices(polygon.size() + 1);
+    for (size_t i = 0; i < polygon.size(); i++)
+    {
+      vertices[i + 1][0] = static_cast<double>(polygon[i].x());
+      vertices[i + 1][1] = static_cast<double>(polygon[i].y());
+    }
+
+    /*{
+      std::vector<SeidelTriangle> result(polygon.size() - 2);
+
+      int num_vertices = static_cast<int>(polygon.size());
+      triangulate_polygon(1, &num_vertices, vertices.data(), result.data());
+
+      std::vector<Triangle2> triangulation(result.size());
+      for (size_t i = 0; i < result.size(); i++)
+      {
+        std::array<Point2, 3> vertices{polygon[result[i][0] - 1], polygon[result[i][1] - 1], polygon[result[i][2] - 1]};
+        triangulation[i] = Triangle2(vertices);
+      }
+
+      CHECK(validate_triangulation(polygon, triangulation));
+    }*/
+
+    BENCHMARK(name + ", Seidel")
+    {
+      std::vector<SeidelTriangle> result(polygon.size() - 2);
+      int num_vertices = static_cast<int>(polygon.size());
+      triangulate_polygon(1, &num_vertices, vertices.data(), result.data());
+      return result;
     };
   }
 }

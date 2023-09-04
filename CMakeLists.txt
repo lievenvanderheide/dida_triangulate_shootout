@@ -9,8 +9,7 @@ FetchContent_Declare(dida_geom
 FetchContent_MakeAvailable(dida_geom)
 
 add_subdirectory(libtess2)
-
-find_package(CGAL REQUIRED)
+add_subdirectory(seidel)
 
 add_executable(dida_triangulate_shootout
     countries_geojson.hpp
@@ -19,4 +18,4 @@ add_executable(dida_triangulate_shootout
     validation.cpp
     validation.hpp)
 
-target_link_libraries(dida_triangulate_shootout dida libtess2 CGAL::CGAL)
+target_link_libraries(dida_triangulate_shootout dida libtess2 seidel)
