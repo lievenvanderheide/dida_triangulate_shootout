@@ -1,7 +1,6 @@
-Triangulation shootout
-======================
+# Triangulation shootout
 
-This repository contains the benchmark which compares DidaGeom's `triangulate` implementation against various other implementations, and the result is that DidaGeom's implementation is clearly the fastest.
+This repository contains the benchmark which compares DidaGeom's `triangulate` implementation against various other implementations. As can be seen in the table below, our implementation is the clear winner.
 
 The other implementations are
 
@@ -9,6 +8,7 @@ The other implementations are
 * [earcut.hpp](https://github.com/mapbox/earcut.hpp).
 * [Seidel](http://gamma.cs.unc.edu/SEIDEL/).
 
+## Results
 The polygons we're triangulating are countries taken from the [geo-countires](https://github.com/datasets/geo-countries) dataset. The numbers in parentheses in the table below are the number of vertices of each polygon.
 
 library      | Canada (20058) | Chile (7288)    | Bangladesh (1828) | Netherlands (592) | San Marino (18) |
