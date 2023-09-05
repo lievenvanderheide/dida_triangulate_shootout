@@ -1,6 +1,6 @@
 # Triangulation shootout
 
-This repository contains the benchmark which compares DidaGeom's `triangulate` implementation against various other implementations. As can be seen in the table below, our implementation is the clear winner.
+This repository contains the benchmark which compares [DidaGeom](https://github.com/lievenvanderheide/dida_geom)'s `triangulate` implementation against various other implementations. As can be seen in the table below, our implementation is the clear winner.
 
 The other implementations are
 
