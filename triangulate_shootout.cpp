@@ -21,12 +21,16 @@ extern "C"
 
 void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
 {
+  std::stringstream s;
+  s << name << " (" << polygon.size() << " vertices)";
+  std::string name_and_num_vertices = s.str();
+
   /*{
     std::vector<Triangle2> triangulation = triangulate(polygon);
     CHECK(validate_triangulation(polygon, triangulation));
   }*/
 
-  BENCHMARK(name + ", triangulate")
+  BENCHMARK(name_and_num_vertices + ", triangulate")
   {
     return triangulate(polygon);
   };
@@ -67,7 +71,7 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
       CHECK(validate_triangulation(polygon, triangulation));
     }*/
 
-    BENCHMARK(name + " libtess2")
+    BENCHMARK(name_and_num_vertices + " libtess2")
     {
       TESStesselator* tessellator = tessNewTess(nullptr);
       tessSetOption(tessellator, TESS_CONSTRAINED_DELAUNAY_TRIANGULATION, 0);
@@ -78,7 +82,7 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
       return tessellator;
     };
 
-    BENCHMARK(name + " libtess2, constrained delaunay")
+    BENCHMARK(name_and_num_vertices + " libtess2, constrained delaunay")
     {
       TESStesselator* tessellator = tessNewTess(nullptr);
       tessSetOption(tessellator, TESS_CONSTRAINED_DELAUNAY_TRIANGULATION, 1);
@@ -119,7 +123,7 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
       CHECK(validate_triangulation(polygon, triangulation));
     }*/
 
-    BENCHMARK(name + ", Mapbox earcut.hpp")
+    BENCHMARK(name_and_num_vertices + ", Mapbox earcut.hpp")
     {
       return mapbox::earcut<uint32_t>(mapbox_polygon);
     };
@@ -149,11 +153,18 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
       CHECK(validate_triangulation(polygon, triangulation));
     }*/
 
-    BENCHMARK(name + ", Seidel")
+    BENCHMARK(name_and_num_vertices + ", Seidel")
     {
       std::vector<SeidelTriangle> result(polygon.size() - 2);
       int num_vertices = static_cast<int>(polygon.size());
       triangulate_polygon(1, &num_vertices, vertices.data(), result.data());
+      return result;
+    };
+
+    BENCHMARK(name_and_num_vertices + ", sort vertices lexicographically")
+    {
+      std::vector<Point2> result(polygon.begin(), polygon.end());
+      std::sort(result.begin(), result.end(), lex_less_than);
       return result;
     };
   }
@@ -165,6 +176,7 @@ TEST_CASE("triangulate benchmark")
       *CountriesGeoJson::read_from_file("/home/lieven/Downloads/geo-countries_zip/archive/countries.geojson");
 
   benchmark_triangulate("Canada", countries.polygon_for_country("Canada"));
-  benchmark_triangulate("Netherlands", countries.polygon_for_country("Netherlands"));
   benchmark_triangulate("Chile", countries.polygon_for_country("Chile"));
+  benchmark_triangulate("Bangladesh", countries.polygon_for_country("Bangladesh"));
+  benchmark_triangulate("Netherlands", countries.polygon_for_country("Netherlands"));
 }
