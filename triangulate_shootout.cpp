@@ -1,6 +1,5 @@
 #include "countries_geojson.hpp"
-#include "dida/detail/vertical_decomposition/divide_and_conquer_builder.hpp"
-#include "dida/detail/vertical_decomposition/triangulate.hpp"
+#include "dida/polygon2_utils.hpp"
 #include "validation.hpp"
 
 #define CATCH_CONFIG_MAIN
@@ -22,22 +21,14 @@ extern "C"
 
 void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
 {
-  using namespace dida::detail::vertical_decomposition;
-
   /*{
-    NodePool node_pool;
-    Node* root_node = vertical_decomposition_with_divide_and_conquer_builder(
-        polygon, node_pool, VerticalDecompositionType::interior_decomposition);
-    std::vector<Triangle2> triangulation = triangulate(polygon, root_node);
+    std::vector<Triangle2> triangulation = triangulate(polygon);
     CHECK(validate_triangulation(polygon, triangulation));
   }*/
 
   BENCHMARK(name + ", triangulate")
   {
-    NodePool node_pool;
-    Node* root_node = vertical_decomposition_with_divide_and_conquer_builder(
-        polygon, node_pool, VerticalDecompositionType::interior_decomposition);
-    return triangulate(polygon, root_node);
+    return triangulate(polygon);
   };
 
   {
