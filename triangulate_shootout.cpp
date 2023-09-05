@@ -179,4 +179,5 @@ TEST_CASE("triangulate benchmark")
   benchmark_triangulate("Chile", countries.polygon_for_country("Chile"));
   benchmark_triangulate("Bangladesh", countries.polygon_for_country("Bangladesh"));
   benchmark_triangulate("Netherlands", countries.polygon_for_country("Netherlands"));
+  benchmark_triangulate("San Marino", countries.polygon_for_country("San Marino"));
 }
