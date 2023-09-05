@@ -21,4 +21,4 @@ std::sort    | 2241 μs        | 737 μs          | 189 μs            | 72 μs 
 
 So DidaGeom's implementation is the clear winner, with `earcut.hpp` coming in second at approximately 8 to 10 times slower for the larger polygons. `libtess2` has the worst performance, with 283 times slower to triangulate Canada.
 
-The `std::sort` row contains the timings of lexicographically sorting the vertices of the respective polygon, and is added for comparison. Any algorithm which requires sorting of the input vertices (such as sweep line based algorithms) won't be able to be faster than this. The fact that DidaGeom's implementation is even faster than sorting for the larger polygons just shows how fast it really is.
+The `std::sort` row contains the timings of lexicographically sorting the vertices of the respective polygon, and is added for comparison. Any algorithm which requires sorting of the input vertices (such as sweep line based algorithms) won't be able to be faster than this. The fact that DidaGeom's implementation is even faster than sorting for the larger polygons shows how good our results are.
