@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(dida_geom)
 
 add_subdirectory(libtess2)
 add_subdirectory(seidel)
+add_subdirectory(poly2tri)
 
 add_executable(dida_triangulate_shootout
     countries_geojson.hpp
@@ -18,4 +19,4 @@ add_executable(dida_triangulate_shootout
     validation.cpp
     validation.hpp)
 
-target_link_libraries(dida_triangulate_shootout dida libtess2 seidel)
+target_link_libraries(dida_triangulate_shootout dida libtess2 seidel poly2tri)

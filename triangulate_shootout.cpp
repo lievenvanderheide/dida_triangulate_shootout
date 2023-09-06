@@ -9,6 +9,8 @@
 #include "libtess2/tesselator.h"
 #include "mapbox/earcut.hpp"
 
+#include "poly2tri/poly2tri.h"
+
 extern "C"
 {
 
@@ -160,14 +162,62 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
       triangulate_polygon(1, &num_vertices, vertices.data(), result.data());
       return result;
     };
+  }
 
-    BENCHMARK(name_and_num_vertices + ", sort vertices lexicographically")
+  {
     {
-      std::vector<Point2> result(polygon.begin(), polygon.end());
-      std::sort(result.begin(), result.end(), lex_less_than);
-      return result;
+      std::vector<p2t::Point> p2t_vertices(polygon.size());
+      std::vector<p2t::Point*> p2t_vertex_ptrs(polygon.size());
+
+      for (size_t i = 0; i < polygon.size(); i++)
+      {
+        p2t_vertices[i] = p2t::Point(static_cast<double>(polygon[i].x()), static_cast<double>(polygon[i].y()));
+        p2t_vertex_ptrs[i] = &p2t_vertices[i];
+      }
+
+      p2t::CDT cdt(p2t_vertex_ptrs);
+      cdt.Triangulate();
+      std::vector<p2t::Triangle*> result = cdt.GetTriangles();
+
+      std::vector<Triangle2> triangulation(result.size());
+      for (size_t i = 0; i < result.size(); i++)
+      {
+        std::array<Point2, 3> tri_vertices;
+        for (size_t j = 0; j < 3; j++)
+        {
+          size_t vertex_index = result[i]->GetPoint(j) - p2t_vertices.data();
+          tri_vertices[j] = polygon[vertex_index];
+        }
+
+        triangulation[i] = Triangle2(tri_vertices);
+      }
+
+      CHECK(validate_triangulation(polygon, triangulation));
+    }
+
+    BENCHMARK(name_and_num_vertices + ", poly2tri")
+    {
+      std::vector<p2t::Point> p2t_vertices(polygon.size());
+      std::vector<p2t::Point*> p2t_vertex_ptrs(polygon.size());
+
+      for (size_t i = 0; i < polygon.size(); i++)
+      {
+        p2t_vertices[i] = p2t::Point(static_cast<double>(polygon[i].x()), static_cast<double>(polygon[i].y()));
+        p2t_vertex_ptrs[i] = &p2t_vertices[i];
+      }
+
+      p2t::CDT cdt(p2t_vertex_ptrs);
+      cdt.Triangulate();
+      cdt.GetTriangles();
     };
   }
+
+  BENCHMARK(name_and_num_vertices + ", sort vertices lexicographically")
+  {
+    std::vector<Point2> result(polygon.begin(), polygon.end());
+    std::sort(result.begin(), result.end(), lex_less_than);
+    return result;
+  };
 }
 
 TEST_CASE("triangulate benchmark")

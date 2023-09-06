@@ -17,6 +17,7 @@ DidaGeom     | 837 μs         | 292 μs          | 68 μs             | 16.8 μ
 libtess2     | 236946 μs      | 27374 μs        | 2909 μs           | 438 μs            | 11229 ns        |
 earcut.hpp   | 9402 μs        | 2488 μs         | 560 μs            | 139 μs            | 815.4 ns        |
 Seidel       | 67762 μs       | 18551 μs        | 12497 μs          | 11513 μs          | 10705 ns        |
+poly2tri     | 79118 μs       | 13643 μs        | 3290 μs           | 1050 μs           | 16934 ns        |
 std::sort    | 2241 μs        | 737 μs          | 189 μs            | 72 μs             | 448 ns          |
 
 So DidaGeom's implementation is the clear winner, with `earcut.hpp` coming in second at approximately 8 to 10 times slower for the larger polygons. `libtess2` has the worst performance, with 283 times slower to triangulate Canada.
