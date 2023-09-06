@@ -7,6 +7,7 @@ The other implementations are
 * [libtess2](https://github.com/memononen/libtess2).
 * [earcut.hpp](https://github.com/mapbox/earcut.hpp).
 * [Seidel](http://gamma.cs.unc.edu/SEIDEL/).
+* [poly2tri](https://github.com/greenm01/poly2tri).
 
 ## Results
 The polygons we're triangulating are countries taken from the [geo-countires](https://github.com/datasets/geo-countries) dataset. The numbers in parentheses are the number of vertices of each polygon.
