@@ -19,4 +19,4 @@ add_executable(dida_triangulate_shootout
     validation.cpp
     validation.hpp)
 
-target_link_libraries(dida_triangulate_shootout dida libtess2 seidel poly2tri)
+target_link_libraries(dida_triangulate_shootout dida libtess2 seidel poly2tri Catch2::Catch2WithMain)
