@@ -41,14 +41,14 @@ bool interiors_cross(Segment2 a, Segment2 b)
 {
   ScalarDeg2 a_start_side = cross(b.direction(), a.start() - b.start());
   ScalarDeg2 a_end_side = cross(b.direction(), a.end() - b.start());
-  if ((a_start_side <= 0 && a_end_side <= 0) || (a_end_side >= 0 && a_end_side >= 0))
+  if ((a_start_side <= 0 && a_end_side <= 0) || (a_start_side >= 0 && a_end_side >= 0))
   {
     return false;
   }
 
   ScalarDeg2 b_start_side = cross(a.direction(), b.start() - a.start());
   ScalarDeg2 b_end_side = cross(a.direction(), b.end() - a.start());
-  if ((b_start_side <= 0 && b_end_side <= 0) || (b_end_side >= 0 && b_end_side >= 0))
+  if ((b_start_side <= 0 && b_end_side <= 0) || (b_start_side >= 0 && b_end_side >= 0))
   {
     return false;
   }
