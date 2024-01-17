@@ -223,7 +223,7 @@ void benchmark_triangulate(const std::string& name, PolygonView2 polygon)
 TEST_CASE("triangulate benchmark")
 {
   CountriesGeoJson countries =
-      *CountriesGeoJson::read_from_file("/home/lieven/Downloads/geo-countries_zip/archive/countries.geojson");
+      *CountriesGeoJson::read_from_file("data/countries.geojson");
 
   benchmark_triangulate("Canada", countries.polygon_for_country("Canada"));
   benchmark_triangulate("Chile", countries.polygon_for_country("Chile"));

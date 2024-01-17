@@ -6,6 +6,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
 
+#include "dida/parser.hpp"
+
 void remove_duplicates_cyclic(std::vector<Point2>& vertices)
 {
   std::vector<Point2>::iterator end_it = std::unique(vertices.begin(), vertices.end());
@@ -16,6 +18,23 @@ void remove_duplicates_cyclic(std::vector<Point2>& vertices)
 
   vertices.erase(end_it, vertices.end());
 }
+
+namespace
+{
+
+std::optional<ScalarDeg1> parse_scalar_deg1(std::string_view str)
+{
+  Parser parser(str);
+  std::optional<ScalarDeg1> result = parser.parse_scalar();
+  if (!parser.finished())
+  {
+    return std::nullopt;
+  }
+
+  return result;
+}
+
+} // namespace
 
 std::shared_ptr<CountriesGeoJson> CountriesGeoJson::read_from_file(const std::string& file_name)
 {
@@ -28,7 +47,7 @@ std::shared_ptr<CountriesGeoJson> CountriesGeoJson::read_from_file(const std::st
 
   rapidjson::Document doc;
   rapidjson::IStreamWrapper stream_wrapper(stream);
-  if (doc.ParseStream(stream_wrapper).HasParseError())
+  if (doc.ParseStream<rapidjson::kParseNumbersAsStringsFlag>(stream_wrapper).HasParseError())
   {
     std::cout << "Failed to parse " << file_name << std::endl;
     return nullptr;
@@ -74,7 +93,9 @@ std::shared_ptr<CountriesGeoJson> CountriesGeoJson::read_from_file(const std::st
     std::vector<Point2> vertices(vertices_json->Size());
     for (size_t j = 0; j < vertices_json->Size(); j++)
     {
-      vertices[j] = Point2((*vertices_json)[j][0].GetDouble(), (*vertices_json)[j][1].GetDouble());
+      std::optional<ScalarDeg1> x = parse_scalar_deg1((*vertices_json)[j][0].GetString());
+      std::optional<ScalarDeg1> y = parse_scalar_deg1((*vertices_json)[j][1].GetString());
+      vertices[j] = Point2(*x, *y);
     }
 
     remove_duplicates_cyclic(vertices);
@@ -86,8 +107,6 @@ std::shared_ptr<CountriesGeoJson> CountriesGeoJson::read_from_file(const std::st
       std::cout << "Country " << country_name << " not a valid polygon." << std::endl;
       continue;
     }
-
-    //std::cout << country_name << ": " << polygon->size() << " vertices." << std::endl;
 
     result->countries_.insert(std::make_pair(country_name, *std::move(polygon)));
   }
